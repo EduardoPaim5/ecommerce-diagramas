@@ -58,6 +58,7 @@ package "Dominio" {
 
   class Carrinho {
     +id: Long
+    +usuarioId: Long
     +atualizadoEm: DateTime
     +adicionarProduto(produto: Produto, quantidade: Integer): void
     +alterarQuantidade(produto: Produto, quantidade: Integer): void
@@ -68,6 +69,7 @@ package "Dominio" {
   }
 
   class ItemCarrinho {
+    +produtoId: Long
     +quantidade: Integer
     +precoUnitario: Decimal
     +alterarQuantidade(quantidade: Integer): void
@@ -76,6 +78,7 @@ package "Dominio" {
 
   class Pedido {
     +id: Long
+    +usuarioId: Long
     +valorTotal: Decimal
     +status: StatusPedido
     +dataCriacao: DateTime
@@ -129,7 +132,7 @@ Categoria "1" <-- "0..*" Produto : categoria
 
 Pedido "1" *-- "1..*" ItemPedido : itens
 Pedido "1" *-- "1" Endereco : enderecoEntrega
-ItemPedido ..> Produto : referencia historica
+ItemPedido ..> Produto : snapshot historico
 
 Usuario --> PapelUsuario
 Pedido --> StatusPedido

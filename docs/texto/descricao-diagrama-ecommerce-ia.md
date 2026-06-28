@@ -13,10 +13,10 @@ Este documento descreve o modelo de classes do e-commerce que deve ser usado por
 - `Usuario`: representa clientes e administradores. O campo `email` deve ser unico. A senha deve ser armazenada somente como hash em `senhaHash`, nunca em texto puro. O campo `papel` define se o usuario e `CLIENTE` ou `ADMIN`.
 - `Categoria`: agrupa produtos por categoria. Um produto pertence a exatamente uma categoria, e uma categoria pode classificar zero ou mais produtos.
 - `Produto`: item vendido no catalogo. Deve ter preco maior ou igual a zero, estoque maior ou igual a zero e flag `ativo`. Produtos inativos nao aparecem no catalogo, mas devem continuar preservados em pedidos antigos.
-- `Carrinho`: carrinho ativo de um usuario. Um usuario possui exatamente um carrinho ativo. O carrinho contem zero ou mais itens.
-- `ItemCarrinho`: representa um produto dentro do carrinho, com quantidade e preco unitario. Nao deve permitir quantidade maior que o estoque disponivel.
-- `Pedido`: compra finalizada por um usuario. Um usuario pode ter zero ou mais pedidos. Todo pedido possui um ou mais itens, um endereco de entrega, valor total, status e data de criacao.
-- `ItemPedido`: copia historica e imutavel do produto no momento da compra. Deve armazenar `produtoId`, `nomeProduto`, `quantidade`, `precoUnitario` e `subtotal`. Alteracoes futuras no produto nao devem alterar pedidos antigos.
+- `Carrinho`: carrinho ativo de um usuario. Um usuario possui exatamente um carrinho ativo. O carrinho contem zero ou mais itens e deve guardar `usuarioId` para persistencia.
+- `ItemCarrinho`: representa um produto dentro do carrinho, com `produtoId`, quantidade e preco unitario. Nao deve permitir quantidade maior que o estoque disponivel.
+- `Pedido`: compra finalizada por um usuario. Um usuario pode ter zero ou mais pedidos. Todo pedido possui `usuarioId`, um ou mais itens, um endereco de entrega, valor total, status e data de criacao.
+- `ItemPedido`: snapshot historico e imutavel do produto no momento da compra. Deve armazenar `produtoId`, `nomeProduto`, `quantidade`, `precoUnitario` e `subtotal`. Alteracoes futuras no produto nao devem alterar pedidos antigos.
 - `Endereco`: endereco de entrega informado no checkout, composto por cep, logradouro, numero, complemento, cidade e estado.
 
 ## Casos de uso esperados
