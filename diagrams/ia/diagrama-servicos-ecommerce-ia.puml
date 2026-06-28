@@ -1,0 +1,83 @@
+@startuml diagrama_servicos_ecommerce_ia
+title Diagrama de Servicos e Casos de Uso - E-commerce para IA
+
+hide circle
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam nodesep 65
+skinparam ranksep 55
+
+skinparam class {
+  BackgroundColor #F8F9FA
+  BorderColor #444444
+  ArrowColor #444444
+}
+
+package "Servicos de aplicacao" {
+  class AutenticacaoService {
+    +cadastrar(nome: String, email: String, senha: String): Usuario
+    +login(email: String, senha: String): Sessao
+    +logout(sessao: Sessao): void
+    -gerarHashSenha(senha: String): String
+  }
+
+  class CatalogoService {
+    +listarProdutosAtivos(): List<Produto>
+    +buscarProdutosPorNome(nome: String): List<Produto>
+    +filtrarProdutosPorCategoria(categoriaId: Long): List<Produto>
+    +obterDetalheProduto(produtoId: Long): Produto
+  }
+
+  class CarrinhoService {
+    +obterCarrinho(usuario: Usuario): Carrinho
+    +adicionarItem(usuario: Usuario, produtoId: Long, quantidade: Integer): Carrinho
+    +alterarQuantidade(usuario: Usuario, produtoId: Long, quantidade: Integer): Carrinho
+    +removerItem(usuario: Usuario, produtoId: Long): Carrinho
+  }
+
+  class CheckoutService {
+    +finalizarCompra(usuario: Usuario, endereco: Endereco): Pedido
+    +simularPagamento(pedido: Pedido): ResultadoPagamento
+    +confirmarPedido(pedido: Pedido, resultado: ResultadoPagamento): Pedido
+  }
+
+  class PedidoService {
+    +listarPedidosDoCliente(usuario: Usuario): List<Pedido>
+    +obterPedido(usuario: Usuario, pedidoId: Long): Pedido
+    +listarTodosPedidos(admin: Usuario): List<Pedido>
+    +atualizarStatus(admin: Usuario, pedidoId: Long, novoStatus: StatusPedido): Pedido
+  }
+
+  class AdministracaoService {
+    +cadastrarProduto(produto: Produto): Produto
+    +editarProduto(produtoId: Long, dados: Produto): Produto
+    +desativarProduto(produtoId: Long): void
+    +cadastrarCategoria(categoria: Categoria): Categoria
+    +editarCategoria(categoriaId: Long, dados: Categoria): Categoria
+  }
+
+  class Sessao {
+    +token: String
+    +usuarioId: Long
+    +expiraEm: DateTime
+  }
+}
+
+AutenticacaoService -[hidden]right- CatalogoService
+CatalogoService -[hidden]right- AdministracaoService
+CarrinhoService -[hidden]right- CheckoutService
+CheckoutService -[hidden]right- PedidoService
+AutenticacaoService -[hidden]down- CarrinhoService
+CatalogoService -[hidden]down- CheckoutService
+AdministracaoService -[hidden]down- PedidoService
+
+note bottom
+  Este diagrama complementa o diagrama de dominio.
+  Ele define os servicos esperados para a IA gerar
+  autenticacao, catalogo, carrinho, checkout,
+  pedidos e administracao.
+end note
+
+@enduml

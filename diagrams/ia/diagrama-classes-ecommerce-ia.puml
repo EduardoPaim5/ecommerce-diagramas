@@ -1,0 +1,151 @@
+@startuml diagrama_classes_ecommerce_ia
+title Diagrama de Classes Completo - E-commerce para IA
+
+hide circle
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam nodesep 70
+skinparam ranksep 65
+
+skinparam class {
+  BackgroundColor #F8F9FA
+  BorderColor #444444
+  ArrowColor #444444
+}
+
+package "Dominio" {
+  class Usuario {
+    +id: Long
+    +nome: String
+    +email: String
+    -senhaHash: String
+    +papel: PapelUsuario
+    +dataCadastro: DateTime
+    +verificarSenha(senha: String): Boolean
+    +ehAdministrador(): Boolean
+    +podeVisualizarPedido(pedido: Pedido): Boolean
+  }
+
+  enum PapelUsuario {
+    CLIENTE
+    ADMIN
+  }
+
+  class Categoria {
+    +id: Long
+    +nome: String
+    +descricao: String
+    +atualizarDados(nome: String, descricao: String): void
+  }
+
+  class Produto {
+    +id: Long
+    +nome: String
+    +descricao: String
+    +imagemUrl: String
+    +preco: Decimal
+    +quantidadeEstoque: Integer
+    +ativo: Boolean
+    +atualizarDados(nome: String, descricao: String, preco: Decimal, imagemUrl: String, categoria: Categoria): void
+    +ativar(): void
+    +desativar(): void
+    +temEstoque(quantidade: Integer): Boolean
+    +baixarEstoque(quantidade: Integer): void
+    +estornarEstoque(quantidade: Integer): void
+  }
+
+  class Carrinho {
+    +id: Long
+    +atualizadoEm: DateTime
+    +adicionarProduto(produto: Produto, quantidade: Integer): void
+    +alterarQuantidade(produto: Produto, quantidade: Integer): void
+    +removerProduto(produto: Produto): void
+    +limpar(): void
+    +calcularTotal(): Decimal
+    +estaVazio(): Boolean
+  }
+
+  class ItemCarrinho {
+    +quantidade: Integer
+    +precoUnitario: Decimal
+    +alterarQuantidade(quantidade: Integer): void
+    +calcularSubtotal(): Decimal
+  }
+
+  class Pedido {
+    +id: Long
+    +valorTotal: Decimal
+    +status: StatusPedido
+    +dataCriacao: DateTime
+    +confirmarPagamento(resultado: ResultadoPagamento): void
+    +marcarComoPago(): void
+    +enviar(): void
+    +confirmarRecebimento(): void
+    +cancelar(): void
+    +podeSerCancelado(): Boolean
+  }
+
+  enum StatusPedido {
+    AGUARDANDO_PAGAMENTO
+    PAGO
+    ENVIADO
+    ENTREGUE
+    CANCELADO
+  }
+
+  enum ResultadoPagamento {
+    APROVADO
+    RECUSADO
+  }
+
+  class ItemPedido {
+    +produtoId: Long
+    +nomeProduto: String
+    +quantidade: Integer
+    +precoUnitario: Decimal
+    +subtotal: Decimal
+    +criarAPartirDoItemCarrinho(item: ItemCarrinho): ItemPedido
+  }
+
+  class Endereco {
+    +cep: String
+    +logradouro: String
+    +numero: String
+    +complemento: String
+    +cidade: String
+    +estado: String
+  }
+}
+
+Usuario "1" *-- "1" Carrinho : possui ativo
+Usuario "1" -- "0..*" Pedido : realiza
+
+Carrinho "1" *-- "0..*" ItemCarrinho : itens
+ItemCarrinho "1" --> "1" Produto : produto
+
+Categoria "1" <-- "0..*" Produto : categoria
+
+Pedido "1" *-- "1..*" ItemPedido : itens
+Pedido "1" *-- "1" Endereco : enderecoEntrega
+ItemPedido ..> Produto : referencia historica
+
+Usuario --> PapelUsuario
+Pedido --> StatusPedido
+Pedido --> ResultadoPagamento
+
+legend bottom
+  Regras principais
+  --
+  Usuario.email unico; senha apenas como hash.
+  Produto.preco >= 0; Produto.quantidadeEstoque >= 0.
+  Produto inativo nao aparece no catalogo, mas permanece em pedidos antigos.
+  Carrinho nao permite quantidade maior que estoque nem checkout vazio.
+  ItemPedido congela produtoId, nomeProduto, quantidade, precoUnitario e subtotal.
+  Pedido inicia em AGUARDANDO_PAGAMENTO e termina em ENTREGUE ou CANCELADO.
+  Transicoes: AGUARDANDO_PAGAMENTO -> PAGO/CANCELADO; PAGO -> ENVIADO/CANCELADO; ENVIADO -> ENTREGUE.
+  Pagamento e simulado; estoque baixa apenas com pagamento aprovado; cancelamento antes do envio estorna estoque.
+endlegend
+
+@enduml

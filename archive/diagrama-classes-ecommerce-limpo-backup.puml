@@ -1,0 +1,115 @@
+@startuml diagrama_classes_ecommerce_limpo
+title Diagrama de Classes - E-commerce
+
+hide circle
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+skinparam class {
+  BackgroundColor #F8F9FA
+  BorderColor #444444
+  ArrowColor #444444
+}
+
+package "Modelo de dominio" {
+  class Usuario {
+    +id: Long
+    +nome: String
+    +email: String
+    -senhaHash: String
+    +papel: PapelUsuario
+    +dataCadastro: DateTime
+  }
+
+  enum PapelUsuario {
+    CLIENTE
+    ADMIN
+  }
+
+  class Categoria {
+    +id: Long
+    +nome: String
+    +descricao: String
+  }
+
+  class Produto {
+    +id: Long
+    +nome: String
+    +descricao: String
+    +imagemUrl: String
+    +preco: Decimal
+    +quantidadeEstoque: Integer
+    +ativo: Boolean
+  }
+
+  class Carrinho {
+    +id: Long
+    +atualizadoEm: DateTime
+  }
+
+  class ItemCarrinho {
+    +quantidade: Integer
+    +precoUnitario: Decimal
+  }
+
+  class Pedido {
+    +id: Long
+    +valorTotal: Decimal
+    +status: StatusPedido
+    +dataCriacao: DateTime
+  }
+
+  enum StatusPedido {
+    AGUARDANDO_PAGAMENTO
+    PAGO
+    ENVIADO
+    ENTREGUE
+    CANCELADO
+  }
+
+  class ItemPedido {
+    +produtoId: Long
+    +nomeProduto: String
+    +quantidade: Integer
+    +precoUnitario: Decimal
+    +subtotal: Decimal
+  }
+
+  class Endereco {
+    +cep: String
+    +logradouro: String
+    +numero: String
+    +complemento: String
+    +cidade: String
+    +estado: String
+  }
+}
+
+Usuario "1" *-- "1" Carrinho : possui
+Usuario "1" -- "0..*" Pedido : realiza
+
+Carrinho "1" *-- "0..*" ItemCarrinho : contem
+ItemCarrinho "1" --> "1" Produto : produto
+
+Categoria "1" <-- "0..*" Produto : classifica
+
+Pedido "1" *-- "1..*" ItemPedido : contem
+Pedido "1" *-- "1" Endereco : entrega em
+ItemPedido ..> Produto : copia historica
+
+legend right
+  Regras principais
+  --
+  email de Usuario deve ser unico
+  senha armazenada apenas como hash
+  Produto.preco >= 0
+  Produto.quantidadeEstoque >= 0
+  produto inativo nao aparece no catalogo
+  ItemPedido congela os dados do produto
+  Status inicial do pedido: AGUARDANDO_PAGAMENTO
+  Status finais: ENTREGUE, CANCELADO
+endlegend
+
+@enduml
