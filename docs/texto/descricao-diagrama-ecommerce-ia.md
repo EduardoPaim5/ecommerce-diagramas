@@ -19,12 +19,21 @@ Este documento descreve o modelo de classes do e-commerce que deve ser usado por
 - `ItemPedido`: snapshot historico e imutavel do produto no momento da compra. Deve armazenar `produtoId`, `nomeProduto`, `quantidade`, `precoUnitario` e `subtotal`. Alteracoes futuras no produto nao devem alterar pedidos antigos.
 - `Endereco`: endereco de entrega informado no checkout, composto por cep, logradouro, numero, complemento, cidade e estado.
 
+## Distribuicao de responsabilidades
+
+- As entidades de dominio concentram as regras de negocio principais.
+- Os services de aplicacao apenas orquestram os casos de uso, chamando os metodos das entidades e persistindo os resultados.
+- `Pedido` controla suas proprias transicoes de estado por meio de `confirmarPagamento`, `enviar`, `confirmarRecebimento` e `cancelar`.
+- `Carrinho` controla adicao, alteracao, remocao de itens, validacao de carrinho vazio e calculo do total.
+- `Produto` controla validacao e ajuste de estoque.
+- `ItemPedido` deve ser criado como snapshot historico a partir de um `ItemCarrinho` e do `Produto` correspondente, para congelar nome e preco no momento da compra.
+
 ## Casos de uso esperados
 
 - `AutenticacaoService`: cadastro, login, logout e hash de senha.
 - `CatalogoService`: listagem de produtos ativos, busca por nome, filtro por categoria e detalhe do produto.
 - `CarrinhoService`: obtencao do carrinho, adicao de item, alteracao de quantidade e remocao de item.
-- `CheckoutService`: finalizacao da compra, simulacao de pagamento e confirmacao do pedido.
+- `CheckoutService`: finalizacao da compra e simulacao de pagamento. Depois da simulacao, o service deve chamar os metodos de dominio do `Pedido` para aplicar a transicao correta de status.
 - `PedidoService`: listagem e detalhe dos pedidos do cliente, visualizacao de todos os pedidos pelo administrador e atualizacao de status.
 - `AdministracaoService`: cadastro, edicao e desativacao de produtos; cadastro e edicao de categorias.
 

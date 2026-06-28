@@ -40,7 +40,6 @@ package "Servicos de aplicacao" {
   class CheckoutService {
     +finalizarCompra(usuario: Usuario, endereco: Endereco): Pedido
     +simularPagamento(pedido: Pedido): ResultadoPagamento
-    +confirmarPedido(pedido: Pedido, resultado: ResultadoPagamento): Pedido
   }
 
   class PedidoService {
@@ -78,6 +77,8 @@ note bottom
   Ele define os servicos esperados para a IA gerar
   autenticacao, catalogo, carrinho, checkout,
   pedidos e administracao.
+  Os servicos orquestram casos de uso.
+  As regras de negocio e transicoes ficam nas entidades do dominio.
 end note
 
 @enduml

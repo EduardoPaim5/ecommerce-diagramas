@@ -83,7 +83,6 @@ package "Dominio" {
     +status: StatusPedido
     +dataCriacao: DateTime
     +confirmarPagamento(resultado: ResultadoPagamento): void
-    +marcarComoPago(): void
     +enviar(): void
     +confirmarRecebimento(): void
     +cancelar(): void
@@ -109,7 +108,7 @@ package "Dominio" {
     +quantidade: Integer
     +precoUnitario: Decimal
     +subtotal: Decimal
-    +criarAPartirDoItemCarrinho(item: ItemCarrinho): ItemPedido
+    +{static} criarSnapshot(item: ItemCarrinho, produto: Produto): ItemPedido
   }
 
   class Endereco {
