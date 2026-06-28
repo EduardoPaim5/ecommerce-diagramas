@@ -8,6 +8,7 @@ Repositorio de apoio para o artigo e para a geracao do sistema a partir dos requ
 - `diagrams/ia/`: diagrama completo para enviar a IA.
 - `docs/requisitos/`: PDF com os requisitos base.
 - `docs/texto/`: descricao textual complementar usada junto com os diagramas.
+- `docs/publish-github.md`: comando para publicar o repositorio quando o `gh` estiver autenticado.
 - `archive/`: versoes antigas ou de apoio.
 
 ## Arquivos principais
