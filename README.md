@@ -2,6 +2,10 @@
 
 Repositorio de apoio para o artigo e para a geracao do sistema a partir dos requisitos do e-commerce.
 
+## Sistema e contexto do experimento
+
+Os artefatos apoiam um experimento acadêmico de geração e avaliação de implementações com assistência de IA. As variantes e suas limitações estão em [ecommerce-sistema](https://github.com/EduardoPaim5/ecommerce-sistema). Diagramas são modelos do problema e não comprovam, por si só, que todos os requisitos foram implementados.
+
 ## Estrutura
 
 - `diagrams/artigo/`: diagrama limpo para o texto do artigo.
